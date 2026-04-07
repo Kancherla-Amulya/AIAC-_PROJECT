@@ -5,12 +5,16 @@ require('dotenv').config();
 
 const seedDatabase = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    console.log('Connected to database for seeding...');
+    // Check if already connected
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      console.log('Connected to database for seeding...');
+    } else {
+      console.log('Using existing database connection for seeding...');
+    }
 
     // Clear existing data
     await User.deleteMany({});
@@ -361,6 +365,7 @@ const seedDatabase = async () => {
 
   } catch (error) {
     console.error('Seeding error:', error);
+    throw error; // Re-throw so the API endpoint can catch it
   } finally {
     // Don't close connection when called from API
     if (require.main === module) {
