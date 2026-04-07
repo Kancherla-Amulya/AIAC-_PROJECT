@@ -56,6 +56,18 @@ app.use('/api/photographers', photographerRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 
+// Seed endpoint (temporary - remove in production)
+app.post('/api/seed', async (req, res) => {
+  try {
+    const { seedDatabase } = require('./seed');
+    await seedDatabase();
+    res.json({ message: 'Database seeded successfully' });
+  } catch (error) {
+    console.error('Seeding error:', error);
+    res.status(500).json({ message: 'Seeding failed', error: error.message });
+  }
+});
+
 // Socket.io for real-time chat
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);

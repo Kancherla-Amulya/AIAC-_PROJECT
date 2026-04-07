@@ -362,8 +362,15 @@ const seedDatabase = async () => {
   } catch (error) {
     console.error('Seeding error:', error);
   } finally {
-    await mongoose.connection.close();
+    // Don't close connection when called from API
+    if (require.main === module) {
+      await mongoose.connection.close();
+    }
   }
 };
 
-seedDatabase();
+if (require.main === module) {
+  seedDatabase();
+}
+
+module.exports = { seedDatabase };
