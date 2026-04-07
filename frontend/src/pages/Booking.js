@@ -76,8 +76,7 @@ const Booking = () => {
         date: bookingData.date.toISOString()
       });
 
-      // Redirect to payment or booking confirmation
-      navigate(`/booking/${response.data.booking._id}/payment`);
+      navigate(`/booking-confirmation/${response.data.booking._id}`);
     } catch (error) {
       console.error('Error creating booking:', error);
       setError(error.response?.data?.message || 'Failed to create booking');
@@ -121,6 +120,7 @@ const Booking = () => {
                   {error}
                 </div>
               )}
+
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Event Type */}
@@ -232,6 +232,7 @@ const Booking = () => {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
               <h3 className="text-lg font-semibold mb-4">Booking Summary</h3>
+
 
               <div className="space-y-4">
                 <div className="flex items-center">

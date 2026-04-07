@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Photographers from './pages/Photographers';
 import PhotographerProfile from './pages/PhotographerProfile';
 import Booking from './pages/Booking';
+import BookingConfirmation from './pages/BookingConfirmation';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/photographers" element={<Photographers />} />
             <Route path="/photographer/:id" element={<PhotographerProfile />} />
             <Route path="/booking/:photographerId" element={<Booking />} />
+            <Route path="/booking-confirmation/:bookingId" element={<BookingConfirmation />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
