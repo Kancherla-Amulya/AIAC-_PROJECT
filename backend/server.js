@@ -50,15 +50,25 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(async () => {
   console.log('MongoDB connected');
   
-  // Auto-seed database if empty
-  try {
-    const { seedDatabase } = require('./seed');
-    await seedDatabase();
-  } catch (error) {
-    console.error('Error seeding database:', error);
-  }
+  // Seed database in background (don't block startup)
+  setTimeout(async () => {
+    try {
+      const { seedDatabase } = require('./seed');
+      const Photographer = require('./models/Photographer');
+      const count = await Photographer.countDocuments();
+      if (count === 0) {
+        console.log('Database is empty, starting seed...');
+        await seedDatabase();
+        console.log('Database seeded successfully');
+      } else {
+        console.log('Database already has data');
+      }
+    } catch (error) {
+      console.error('Error seeding database:', error);
+    }
+  }, 2000);
 })
-.catch(err => console.log(err));
+.catch(err => console.log('MongoDB connection error:', err));
 
 // Routes
 app.use('/api/auth', authRoutes);
