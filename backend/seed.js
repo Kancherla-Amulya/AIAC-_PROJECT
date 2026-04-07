@@ -36,9 +36,20 @@ const seedDatabase = async () => {
     
     console.log('Seeding database with photographers...');
     
-    // Clear existing data
-    await User.deleteMany({});
-    await Photographer.deleteMany({});
+    // Clear existing data carefully
+    try {
+      await Photographer.deleteMany({});
+      console.log('Cleared existing photographers');
+    } catch (error) {
+      console.log('No photographers to clear');
+    }
+    
+    try {
+      await User.deleteMany({});
+      console.log('Cleared existing users');
+    } catch (error) {
+      console.log('No users to clear');
+    }
 
     // Create admin user
     const adminUser = new User({

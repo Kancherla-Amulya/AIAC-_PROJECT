@@ -43,32 +43,41 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quantum-pix', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(async () => {
-  console.log('MongoDB connected');
-  
+  console.log('MongoDB connected successfully');
+
   // Seed database in background (don't block startup)
   setTimeout(async () => {
     try {
-      const { seedDatabase } = require('./seed');
+      console.log('Checking database...');
       const Photographer = require('./models/Photographer');
       const count = await Photographer.countDocuments();
+      console.log(`Found ${count} photographers in database`);
+
       if (count === 0) {
         console.log('Database is empty, starting seed...');
+        const { seedDatabase } = require('./seed');
         await seedDatabase();
-        console.log('Database seeded successfully');
+        const newCount = await Photographer.countDocuments();
+        console.log(`Database seeded successfully with ${newCount} photographers`);
       } else {
-        console.log('Database already has data');
+        console.log('Database already has data, skipping seed');
       }
     } catch (error) {
-      console.error('Error seeding database:', error);
+      console.error('Error during database seeding:', error.message);
+      console.error('Stack:', error.stack);
     }
-  }, 2000);
+  }, 3000);
 })
-.catch(err => console.log('MongoDB connection error:', err));
+.catch(err => {
+  console.error('MongoDB connection error:', err.message);
+  console.error('Please check your MONGODB_URI environment variable');
+  process.exit(1);
+});
 
 // Routes
 app.use('/api/auth', authRoutes);

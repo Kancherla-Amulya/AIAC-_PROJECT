@@ -32,7 +32,7 @@ router.post('/register', [
     await user.save();
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'fallback-secret-key-change-in-production', {
       expiresIn: '7d'
     });
 
@@ -78,7 +78,7 @@ router.post('/login', [
     }
 
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'fallback-secret-key-change-in-production', {
       expiresIn: '7d'
     });
 
