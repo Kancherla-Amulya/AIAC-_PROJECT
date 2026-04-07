@@ -4,9 +4,9 @@ A full-stack web application for booking professional photographers for events. 
 
 ## 🚀 Live Demo
 
-**Frontend (Website)**: [https://aiac-frontend.onrender.com](https://aiac-frontend.onrender.com)
+**Frontend (Website)**: [https://aiac-frontend.onrender.com](https://aiac-project-5.onrender.com/)
 
-**Backend (API)**: [https://aiac-backend.onrender.com](https://aiac-backend.onrender.com)
+**Backend (API)**: [https://aiac-backend.onrender.com](https://aiac-project-4.onrender.com/)
 
 **GitHub Repository**: [https://github.com/Kancherla-Amulya/AIAC-_PROJECT](https://github.com/Kancherla-Amulya/AIAC-_PROJECT)
 
