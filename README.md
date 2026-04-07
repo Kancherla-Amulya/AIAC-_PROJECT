@@ -2,6 +2,12 @@
 
 A full-stack web application for booking professional photographers for events. Built with React, Node.js, Express, MongoDB, and modern web technologies.
 
+## 🚀 Live Demo
+
+**Website URL**: [https://aiac-project.vercel.app](https://aiac-project.vercel.app)
+
+**GitHub Repository**: [https://github.com/Kancherla-Amulya/AIAC-_PROJECT](https://github.com/Kancherla-Amulya/AIAC-_PROJECT)
+
 ## Features
 
 - **User Roles**: Customer, Photographer, Admin
