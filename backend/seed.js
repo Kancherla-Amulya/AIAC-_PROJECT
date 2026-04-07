@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const seedDatabase = async () => {
   try {
-    // Check if already connected
+    // Only connect if not already connected
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
@@ -13,9 +13,29 @@ const seedDatabase = async () => {
       });
       console.log('Connected to database for seeding...');
     } else {
-      console.log('Using existing database connection for seeding...');
+      console.log('Using existing database connection...');
+      // Wait for connection to be ready
+      if (mongoose.connection.readyState === 2) {
+        await new Promise(resolve => {
+          const checkState = setInterval(() => {
+            if (mongoose.connection.readyState === 1) {
+              clearInterval(checkState);
+              resolve();
+            }
+          }, 100);
+        });
+      }
     }
 
+    // Only seed if database is empty
+    const photographerCount = await Photographer.countDocuments();
+    if (photographerCount > 0) {
+      console.log('Database already seeded, skipping...');
+      return;
+    }
+    
+    console.log('Seeding database with photographers...');
+    
     // Clear existing data
     await User.deleteMany({});
     await Photographer.deleteMany({});

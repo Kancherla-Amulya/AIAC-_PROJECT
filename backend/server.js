@@ -52,17 +52,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   
   // Auto-seed database if empty
   try {
-    const photographerCount = await mongoose.connection.db.collection('photographers').countDocuments();
-    if (photographerCount === 0) {
-      console.log('Database is empty, seeding...');
-      const { seedDatabase } = require('./seed');
-      await seedDatabase();
-      console.log('Database seeded successfully');
-    } else {
-      console.log('Database already has data, skipping seed');
-    }
+    const { seedDatabase } = require('./seed');
+    await seedDatabase();
   } catch (error) {
-    console.error('Error checking/seeding database:', error);
+    console.error('Error seeding database:', error);
   }
 })
 .catch(err => console.log(err));
