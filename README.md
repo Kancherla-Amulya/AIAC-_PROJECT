@@ -4,9 +4,16 @@ A full-stack web application for booking professional photographers for events. 
 
 ## 🚀 Live Demo
 
-**Website URL**: [https://aiac-project.vercel.app](https://aiac-project.vercel.app)
+**Frontend (Website)**: [https://aiac-frontend.onrender.com](https://aiac-frontend.onrender.com)
+
+**Backend (API)**: [https://aiac-backend.onrender.com](https://aiac-backend.onrender.com)
 
 **GitHub Repository**: [https://github.com/Kancherla-Amulya/AIAC-_PROJECT](https://github.com/Kancherla-Amulya/AIAC-_PROJECT)
+
+### Deployment Platform
+- **Frontend**: Deployed on Render (Static Site)
+- **Backend**: Deployed on Render (Web Service)
+- **Database**: MongoDB Atlas
 
 ## Features
 
@@ -155,39 +162,43 @@ quantum-pix/
 
 ## Deployment
 
-### Backend Deployment (Railway/Render)
+### Deployed on Render
 
-1. **Railway**:
-   - Connect your GitHub repository
-   - Set environment variables in Railway dashboard
-   - Deploy automatically
+Both frontend and backend are deployed on **Render**.
 
-2. **Render**:
-   - Create a new Web Service
-   - Connect your GitHub repository
-   - Set environment variables
-   - Set build command: `npm install`
-   - Set start command: `npm start`
+#### Backend Deployment (Web Service)
 
-### Frontend Deployment (Vercel/Netlify)
+1. Create a Web Service on Render
+2. Connect GitHub repository: `Kancherla-Amulya/AIAC-_PROJECT`
+3. Configure:
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+4. Set environment variables (see below)
+5. Deploy
 
-1. **Vercel**:
-   - Connect your GitHub repository
-   - Set environment variables in Vercel dashboard
-   - Deploy automatically
+**Backend URL**: `https://aiac-backend.onrender.com`
 
-2. **Netlify**:
-   - Connect your GitHub repository
-   - Set build command: `npm run build`
-   - Set publish directory: `build`
-   - Set environment variables
+#### Frontend Deployment (Static Site)
+
+1. Create a Static Site on Render
+2. Connect GitHub repository: `Kancherla-Amulya/AIAC-_PROJECT`
+3. Configure:
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm install && npm run build`
+   - **Publish Directory**: `build`
+4. Set environment variables (see below)
+5. Deploy
+
+**Frontend URL**: `https://aiac-frontend.onrender.com`
 
 ### Environment Variables Setup
 
-**Backend:**
+**Backend (.env or Render Environment Variables):**
 ```env
-MONGODB_URI=your-mongodb-connection-string
-JWT_SECRET=your-secure-jwt-secret
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/quantum-pix
+JWT_SECRET=your-secure-jwt-secret-key-here
+FRONTEND_URL=https://aiac-frontend.onrender.com
 CLOUDINARY_CLOUD_NAME=your-cloudinary-name
 CLOUDINARY_API_KEY=your-cloudinary-key
 CLOUDINARY_API_SECRET=your-cloudinary-secret
@@ -196,10 +207,11 @@ RAZORPAY_KEY_SECRET=your-razorpay-key-secret
 FRONTEND_URL=your-frontend-url
 ```
 
-**Frontend:**
+**Frontend (.env or Render Environment Variables):**
 ```env
-REACT_APP_API_URL=your-backend-url
+REACT_APP_API_URL=https://aiac-backend.onrender.com
 REACT_APP_RAZORPAY_KEY_ID=your-razorpay-key-id
+REACT_APP_GOOGLE_MAPS_API_KEY=your-google-maps-key (optional)
 ```
 
 ### Database Setup
