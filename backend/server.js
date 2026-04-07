@@ -47,7 +47,24 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB connected'))
+.then(async () => {
+  console.log('MongoDB connected');
+  
+  // Auto-seed database if empty
+  try {
+    const photographerCount = await mongoose.connection.db.collection('photographers').countDocuments();
+    if (photographerCount === 0) {
+      console.log('Database is empty, seeding...');
+      const { seedDatabase } = require('./seed');
+      await seedDatabase();
+      console.log('Database seeded successfully');
+    } else {
+      console.log('Database already has data, skipping seed');
+    }
+  } catch (error) {
+    console.error('Error checking/seeding database:', error);
+  }
+})
 .catch(err => console.log(err));
 
 // Routes
@@ -55,18 +72,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/photographers', photographerRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
-
-// Seed endpoint (temporary - remove in production)
-app.post('/api/seed', async (req, res) => {
-  try {
-    const { seedDatabase } = require('./seed');
-    await seedDatabase();
-    res.json({ message: 'Database seeded successfully' });
-  } catch (error) {
-    console.error('Seeding error:', error);
-    res.status(500).json({ message: 'Seeding failed', error: error.message });
-  }
-});
 
 // Socket.io for real-time chat
 io.on('connection', (socket) => {
