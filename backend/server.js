@@ -66,6 +66,35 @@ app.use('/api/photographers', photographerRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 
+// Manual seed endpoint
+app.post('/api/manual-seed', async (req, res) => {
+  try {
+    const { seedDatabase } = require('./seed');
+    await seedDatabase();
+    const Photographer = require('./models/Photographer');
+    const count = await Photographer.countDocuments();
+    res.json({ message: 'Database seeded successfully', photographersCount: count });
+  } catch (error) {
+    console.error('Manual seeding error:', error);
+    res.status(500).json({ message: 'Seeding failed', error: error.message });
+  }
+});
+
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    const Photographer = require('./models/Photographer');
+    const count = await Photographer.countDocuments();
+    res.json({ 
+      status: 'ok', 
+      photographersCount: count,
+      mongooseConnection: mongoose.connection.readyState === 1 ? 'connected' : 'not connected'
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 // Socket.io for real-time chat
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);

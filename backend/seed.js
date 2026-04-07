@@ -355,6 +355,7 @@ const seedDatabase = async () => {
         rating: photographerData.rating,
         totalReviews: photographerData.totalReviews,
         experience: photographerData.experience,
+        isActive: true,
         equipment: ['Canon EOS R6', 'Nikon Z7 ii', 'Profoto lighting kit'],
         socialLinks: {
           instagram: `https://instagram.com/${photographerData.name.toLowerCase().replace(/\s+/g, '')}`,
