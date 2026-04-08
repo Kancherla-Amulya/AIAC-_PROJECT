@@ -10,6 +10,14 @@ const socketIo = require('socket.io');
 // Load environment variables
 dotenv.config();
 
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/quantum-pix';
+
+if (!/^mongodb(\+srv)?:\/\//.test(mongoUri)) {
+  console.error('MongoDB connection error: Invalid connection string.');
+  console.error('Please set MONGODB_URI or DATABASE_URL to a valid MongoDB URI starting with mongodb:// or mongodb+srv://');
+  process.exit(1);
+}
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const photographerRoutes = require('./routes/photographers');
@@ -42,11 +50,18 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quantum-pix', {
+// Configure Mongoose to fail fast if MongoDB is disconnected
+mongoose.set('bufferCommands', false);
+mongoose.set('strictQuery', false);
+
+const connectOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
+  serverSelectionTimeoutMS: 10000,
+};
+
+// Connect to MongoDB
+mongoose.connect(mongoUri, connectOptions)
 .then(async () => {
   console.log('MongoDB connected successfully');
 
@@ -75,8 +90,20 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/quantum-p
 })
 .catch(err => {
   console.error('MongoDB connection error:', err.message);
-  console.error('Please check your MONGODB_URI environment variable');
+  console.error('Please check your MONGODB_URI, MONGO_URI or DATABASE_URL environment variable');
   process.exit(1);
+});
+
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connection event: connected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection event: error', err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('Mongoose connection event: disconnected');
 });
 
 // Routes
@@ -101,16 +128,36 @@ app.post('/api/manual-seed', async (req, res) => {
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
+  const connectionStates = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting'
+  };
+
   try {
+    const connectionState = connectionStates[mongoose.connection.readyState] || 'unknown';
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        status: 'error',
+        message: 'MongoDB not connected',
+        mongooseConnection: connectionState
+      });
+    }
+
     const Photographer = require('./models/Photographer');
     const count = await Photographer.countDocuments();
     res.json({ 
       status: 'ok', 
       photographersCount: count,
-      mongooseConnection: mongoose.connection.readyState === 1 ? 'connected' : 'not connected'
+      mongooseConnection: connectionState
     });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    res.status(500).json({
+      status: 'error',
+      message: error.message,
+      mongooseConnection: connectionStates[mongoose.connection.readyState] || 'unknown'
+    });
   }
 });
 

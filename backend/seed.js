@@ -7,9 +7,14 @@ const seedDatabase = async () => {
   try {
     // Only connect if not already connected
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGODB_URI, {
+      const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.DATABASE_URL;
+      if (!mongoUri || !/^mongodb(\+srv)?:\/\//.test(mongoUri)) {
+        throw new Error('Invalid or missing MongoDB URI for seeding. Set MONGODB_URI, MONGO_URI, or DATABASE_URL.');
+      }
+      await mongoose.connect(mongoUri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
+        serverSelectionTimeoutMS: 10000,
       });
       console.log('Connected to database for seeding...');
     } else {

@@ -94,6 +94,7 @@ A full-stack web application for booking professional photographers for events. 
 ### Backend (.env)
 ```env
 PORT=5000
+# Render can also use MONGO_URI or DATABASE_URL instead of MONGODB_URI
 MONGODB_URI=mongodb://localhost:27017/quantum-pix
 JWT_SECRET=your-jwt-secret
 FRONTEND_URL=http://localhost:3000
